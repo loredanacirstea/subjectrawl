@@ -1,0 +1,4 @@
+"","id","name","icon","uuid","type_level","langs","root_url","csv_url"
+"1",1,"SMP Axial 2D Navigator","icons/axial.png","be805fbe-7759-11e4-adb6-57ce06b062da","tree","en","http://sliced.ro/smp/nav2d.php?lang=<lang>&uuid=<uuid>&p=<x_med>&a=0#0.385/20.738/-6.675","https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv"
+"2",2,"SMP Sagittal 2D Navigator","icons/sagittal.png","be805fbe-7759-11e4-adb6-57ce06b062da","tree","en","http://sliced.ro/smp/nav2d.php?lang=<lang>&uuid=<uuid>&h=1#0.265/288.27/17.7","https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv"
+"3",3,"SMP Frontal 2D Navigator","icons/frontal.png","be805fbe-7759-11e4-adb6-57ce06b062da","tree","en","http://sliced.ro/smp/nav2d.php?lang=<lang>&uuid=<uuid>&h=2#0.265/173.27/17.7","https://raw.githubusercontent.com/ctzurcanu/smp/master/data/jos_sliced_api.csv"

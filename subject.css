@@ -1,0 +1,117 @@
+#onto_drop{
+    position: fixed;
+}
+#lang_drop{
+    padding-left: 10px;
+}
+#tree{
+    padding-top: 40px;
+}
+.ui.tabular{
+    margin-bottom: 0px;
+}
+#results{
+    position: fixed;
+    right: 0;
+    top: 0;
+    min-height: 100px;
+    min-width: 100px;
+    margin-left: 1px;
+    -webkit-border-radius: 0 6px 6px 6px;
+    -moz-border-radius: 0 6px 6px;
+    border-radius: 0 6px 6px 6px;
+}
+#event_result{
+    display: block;
+    background-color: #D9EDF7;
+}
+.row{
+    display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
+    display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
+    display: -ms-flexbox;      /* TWEENER - IE 10 */
+    display: -webkit-flex;     /* NEW - Chrome */
+    display: flex;
+}
+#ontology{
+    display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
+    display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
+    display: -ms-flexbox;      /* TWEENER - IE 10 */
+    display: -webkit-flex;     /* NEW - Chrome */
+    display: flex;
+    height: 35px;
+    background-color: #428BCA;
+    border-color: #357ebd;
+    padding-top: 6px;
+    padding-left: 10px;
+    padding-right: 12px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #FFFFFF;
+    text-align: center;
+    vertical-align: middle;
+}
+#lang{
+    padding-left: 5px;
+}
+#description{
+    padding-left: 8px;
+}
+#relation{
+    padding-left: 5px;
+}
+#source{
+    padding-left: 10px;
+}
+#source>a{
+    color: #FFFFFF;
+}
+img{
+    height: 20px;
+}
+.img_apps{
+    height: 40px;
+}
+.img_apps_first{
+    height: 60px;
+    padding-right: 20px;
+}
+.logo{
+    height: 40px;
+}
+.flex{
+    display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
+    display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
+    display: -ms-flexbox;      /* TWEENER - IE 10 */
+    display: -webkit-flex;     /* NEW - Chrome */
+    display: flex;
+}
+#tags_segment{
+    display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
+    display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
+    display: -ms-flexbox;      /* TWEENER - IE 10 */
+    display: -webkit-flex;     /* NEW - Chrome */
+    display: flex;
+}
+.tags_content{
+    padding-top: 5px;
+    display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
+    display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
+    display: -ms-flexbox;      /* TWEENER - IE 10 */
+    display: -webkit-flex;     /* NEW - Chrome */
+    display: flex;
+}
+.middle{
+    max-width: 60%;
+    min-width: 400px;
+    padding-top: 40px;
+    margin: auto;
+}
+.explanation{
+    padding-left: 5px;
+}
+
+#help{
+    position: fixed;
+    bottom: 3.5px;
+    right: 0;
+}
