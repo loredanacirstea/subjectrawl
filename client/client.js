@@ -25,7 +25,28 @@ Template.registerHelper("log", function(opt){
   console.log(opt);
 });
 
+Template.registerHelper("flag", function(lang){
+  if(lang != undefined){
+    var img = "/icons/"+lang+".png";
+    return img;
+  }
+});
+Template.registerHelper("iconify", function(source, lang){
+  if(source != undefined){
+    return source;
+  }
+  else{
+    var img = "/icons/"+lang+".png";
+    return img;
+  }
+});
 
+show_uuids = function show_uuids(){
+  if($('.uncoverable').attr("type") == "hidden")
+    $('.uncoverable').attr("type","text");
+  else
+    $('.uncoverable').attr("type","hidden");
+}
 text_tool = function text_tool(data){
   var text_id = data.level+"_input";
   var hidden_id = data.level+"_input_id";
@@ -38,35 +59,33 @@ text_tool = function text_tool(data){
     var action = "activate";
   }
   Blaze.renderWithData(Template.input, {text_id: text_id, placeholder: "Choose from "+data.level, hidden_id: hidden_id, buttons_id: data.level+"_buttons", text_type: text_type}, data.node);
-  $("#"+data.drop.dropdown_id).dropdown({
-      action: action
-      /*
-      ,onChange: function(value, text, $choice){
-          var uuid = $choice[0].attributes["data-uuid"].value;
-          if(data.level=="tree_flat"){
-              var start = text.lastIndexOf(" : ");
-              text = text.substring(start+3));
-          }
-          $('#'+hidden_id).val(uuid);
+    $("#"+data.drop.dropdown_id).dropdown({
+        action: action,
+        allowCategorySelection: true,
+        onChange: function(value, text, $choice){
+          console.log(value);
+          console.log(text);
+          console.log($choice);
+          var id = $choice[0].attributes["data-uuid"].value;
+          var text = $choice[0].attributes["data-name"].value;
+          var lang = $choice[0].attributes["data-lang"].value;
+          $('#'+hidden_id).val(id);
           if(Session.get("choose_output")=="value")
-            $('#'+text_id).val(text.trim());
+            $('#'+text_id).val(text);
           else if(Session.get("choose_output")=="uuid")
-            $('#'+text_id).val(uuid);
+            $('#'+text_id).val(id);
           else{
-            $.getJSON( "/translations/"+uuid, function(data1){
-              console.log(data1);
+            $.getJSON( "/translations/"+id, function(data1){
               $('#'+text_id).val(data1[Session.get("official_id_lang")][0]);
             });
           }
-      }
-      */
-  });
+        }
+    });
 }
 
 nav_tool = function nav_tool(data){
-  $("#"+data.drop.dropdown_id).dropdown(
-    /*
-      {
+  $("#"+data.drop.dropdown_id).dropdown({
+      allowCategorySelection: true,
       onChange: function(value, text, $choice){
         var id = $choice[0].attributes["data-uuid"].value;
         var lang = $choice[0].attributes["data-lang"].value;
@@ -75,118 +94,37 @@ nav_tool = function nav_tool(data){
         Blaze.render(Template.tools, document.body);
       }
       }
-    */
     );
-}
-nav_tool_extra = function nav_tool_extra(event, data){
-    if(event.currentTarget.children.length > 0){
-      var dropdownid = data.drop.dropdown_id;
-      var id = event.currentTarget.getAttribute("data-uuid");
-      var lang = event.currentTarget.getAttribute("data-lang");
-      var text = event.currentTarget.children[0].textContent.trim();
-    }
-    else{
-      var id = event.target.getAttribute("data-uuid");
-      var lang = event.target.getAttribute("data-lang");
-      var text = event.target.textContent.trim();
-    }
-    var origin = data.origin;
-    event.stopPropagation();
-    window.location.href = "/tools/"+lang+"/"+id+"/origin/"+origin;
-    Blaze.render(Template.tools, document.body);
-}
-text_tool_extra = function text_tool_extra(event, data){
-  if(event.currentTarget.children.length > 0){
-      var dropdownid = data.drop.dropdown_id;
-      var id = event.currentTarget.getAttribute("data-uuid");
-      var lang = event.currentTarget.getAttribute("data-lang");
-      var text = event.currentTarget.children[0].textContent.trim();
-    }
-    else{
-      var id = event.target.getAttribute("data-uuid");
-      var lang = event.target.getAttribute("data-lang");
-      var text = event.target.textContent.trim();
-    }
-    if(data.level=="tree_flat"){
-      var start = text.lastIndexOf(" : ");
-      text = text.substring(start+3);
-    }
-    var text_id = data.level+"_input";
-    var hidden_id = data.level+"_input_id";
-    $('#'+hidden_id).val(id);
-    if(Session.get("choose_output")=="value")
-      $('#'+text_id).val(text);
-    else if(Session.get("choose_output")=="uuid")
-      $('#'+text_id).val(id);
-    else{
-      $.getJSON( "/translations/"+id, function(data1){
-        console.log(data1);
-        $('#'+text_id).val(data1[Session.get("official_id_lang")][0]);
-      });
-    }
-    $('#'+dropdownid).dropdown('hide');
-    event.stopPropagation();
-}
-/*
-choose_menu = function choose_menu(event, dropdownid){
-    console.log(event);
-    console.log(event.target);
-    console.log(event.currentTarget.children);
-    console.log(event.currentTarget.children.length);
-    if(event.currentTarget.children.length > 0){
-      var id = event.currentTarget.getAttribute("data-uuid");
-      var lang = event.currentTarget.getAttribute("data-lang");
-      var text = event.currentTarget.children[0].textContent.trim();
-      //var text = event.target.textContent.trim();
-      $('#'+dropdownid+' .text:not(.icon)')[0].textContent = text;
-      Session.set("lang", lang);
-      Session.set("origin", id);
-      data = {id: id, lang: lang, origin: id};
-      console.log(data);
-      Blaze.renderWithData(Template.jstree, data, document.getElementById("tree"));
-      //event.cancelBubble = true;
-      $('#'+dropdownid).dropdown('hide');
-    }
-    event.stopPropagation();
-}
-*/
-choose_ontology_extra = function choose_ontology_extra(event, data){
-    if(event.currentTarget.getAttribute("data-uuid") != null || event.target.getAttribute("data-uuid") != null){
-      if(event.currentTarget.children.length > 0){
-        var dropdownid = data.drop.dropdown_id;
-        var id = event.currentTarget.getAttribute("data-uuid");
-        var lang = event.currentTarget.getAttribute("data-lang");
-        var text = event.currentTarget.children[0].textContent.trim();
-      }
-      else{
-        var id = event.target.getAttribute("data-uuid");
-        var lang = event.target.getAttribute("data-lang");
-        var text = event.target.textContent.trim();
-      }
-      //$('#'+dropdownid+' .text:not(.icon)')[0].textContent = text;
-      console.log(text);
-       $('#'+dropdownid).dropdown('set text',text);
-        Session.set("lang", lang);
-        Session.set("origin", id);
-        data = {id: id, lang: lang, origin: id};
-        console.log(data);
-        Blaze.renderWithData(Template.jstree, data, document.getElementById("tree"));
-        $('#'+dropdownid).dropdown('hide');
-    }
-    event.stopPropagation();
 }
 
 search = function(type, node, id, lang, callback){
-  $.getJSON( "/tree_flat/"+lang+"/"+id, function(data1){
-      var data = {};
-      data.subjects = data1;
-      data.drop={};
-      data.drop.dropdown_id = type + "_dropdown";
-      data.callback = callback;
-      data.level = type;
-      data.node = node;
-      Blaze.renderWithData(Template.search_simple_dropdown, data, data.node);
-  });
+  var path = "/tree_flat/"+lang+"/"+id;
+  if(Object.keys(async_cache).indexOf(path) == -1){
+    $.getJSON( path, function(data1){
+        async_cache[path] = data;
+        console.log(async_cache);
+        Session.set("async_cache", async_cache);
+        var data = {};
+        data.subjects = data1;
+        data.drop={};
+        data.drop.dropdown_id = type + "_dropdown";
+        data.callback = callback;
+        data.level = type;
+        data.node = node;
+        Blaze.renderWithData(Template.search_simple_dropdown, data, data.node);
+    });
+  }
+  else{
+    data1 = async_cache[path];
+    var data = {};
+    data.subjects = data1;
+    data.drop={};
+    data.drop.dropdown_id = type + "_dropdown";
+    data.callback = callback;
+    data.level = type;
+    data.node = node;
+    Blaze.renderWithData(Template.search_simple_dropdown, data, data.node);
+  }
 }
 
 search_tree = function(){
@@ -254,17 +192,27 @@ new_dropdown = function(level, node, id, lang, origin, callback){
           $.getJSON( path2, function(data2){
               async_cache[path2] = data2;
               Session.set("async_cache", async_cache);
-              dat.drop = data2[0];
+              //dat.drop = data2[0];
+              
+              dat.drop = data1[0];
+              dat.drop["name"] = [data1[0]["subject"]];
+              dat.drop.children = data2[0].children;
+              
               dat.drop.dropdown_id = dropdown_id;
-              dat.drop.icon = "/icons/kids.png";
+              dat.drop.icon = "/icons/siblings.png";
               Blaze.renderWithData(Template.khron_drop, dat, node);
           });
         }
         else{
           data2 = async_cache[path2];
-          dat.drop = data2[0];
+          //dat.drop = data2[0];
+
+          dat.drop = data1[0];
+          dat.drop["name"] = [data1[0]["subject"]];
+          dat.drop.children = data2[0].children;
+
           dat.drop.dropdown_id = dropdown_id;
-          dat.drop.icon = "/icons/kids.png";
+          dat.drop.icon = "/icons/siblings.png";
           Blaze.renderWithData(Template.khron_drop, dat, node);
         }
       });
@@ -276,17 +224,27 @@ new_dropdown = function(level, node, id, lang, origin, callback){
           $.getJSON( path2, function(data2){
               async_cache[path2] = data2;
               Session.set("async_cache", async_cache);
-              dat.drop = data2[0];
+              //dat.drop = data2[0];
+
+              dat.drop = data1[0];
+              dat.drop["name"] = [data1[0]["subject"]];
+              dat.drop.children = data2[0].children;
+
               dat.drop.dropdown_id = dropdown_id;
-              dat.drop.icon = "/icons/kids.png";
+              dat.drop.icon = "/icons/siblings.png";
               Blaze.renderWithData(Template.khron_drop, dat, node);
           });
         }
         else{
           data2 = async_cache[path2];
-          dat.drop = data2[0];
+          //dat.drop = data2[0];
+
+          dat.drop = data1[0];
+          dat.drop["name"] = [data1[0]["subject"]];
+          dat.drop.children = data2[0].children;
+
           dat.drop.dropdown_id = dropdown_id;
-          dat.drop.icon = "/icons/kids.png";
+          dat.drop.icon = "/icons/siblings.png";
           Blaze.renderWithData(Template.khron_drop, dat, node);
         }
     }
@@ -399,8 +357,9 @@ new_dropdown = function(level, node, id, lang, origin, callback){
         dat.drop = {};
         dat.drop.name = data[Session.get("lang")];
         dat.drop.children = [];
-        for(var i in data){
-          dat.drop.children.push({name:data[i], uuid:id});
+        var keys = Object.keys(data);
+        for(var i = 0; i < keys.length; i++){
+          dat.drop.children.push({name:data[keys[i]], uuid:id, lang:keys[i], subject:data[keys[i]]});
         }
         dat.drop.dropdown_id = dropdown_id;
         dat.drop.icon = "/icons/langs.png";
@@ -425,6 +384,7 @@ new_dropdown = function(level, node, id, lang, origin, callback){
 
 Template.tools.rendered = function(){
   Session.set("lang",this.data["lang"]);
+  Session.set("origin",this.data["origin"]);
   var dropdowns = ["kids", "siblings", "path", "tree", "tree_flat", "translations"];
 /*
   for(i = 0; i < dropdowns.length; i++){
@@ -439,11 +399,14 @@ Template.tools.rendered = function(){
   new_dropdown("tree", document.getElementById("text_drop"), this.data["id"], this.data["lang"], this.data["origin"], text_tool);
   new_dropdown("tree_flat", document.getElementById("text_drop"), this.data["id"], this.data["lang"], this.data["origin"], text_tool);
   new_dropdown("translations", document.getElementById("text_drop"), this.data["id"], this.data["lang"], this.data["origin"], text_tool);
-  new_dropdown("kids", document.getElementById("nav_drop"), this.data["id"], this.data["lang"], this.data["origin"], nav_tool);
+  //new_dropdown("kids", document.getElementById("nav_drop"), this.data["id"], this.data["lang"], this.data["origin"], nav_tool);
+  new_dropdown("tree", document.getElementById("nav_drop"), this.data["id"], this.data["lang"], this.data["origin"], nav_tool);
+  new_dropdown("path", document.getElementById("nav_drop"), this.data["id"], this.data["lang"], this.data["origin"], nav_tool);
+  new_dropdown("translations", document.getElementById("nav_drop"), this.data["id"], this.data["lang"], this.data["origin"], nav_tool);
 
   //search_tree(this.data);
-  //search("search_simple", document.getElementById("search_writing"), this.data.id, this.data.lang, text_tool);
-  //Blaze.renderWithData(Template.tags_tool, this.data, document.getElementById("tags_tool"));
+  search("search_simple", document.getElementById("search_tool"), this.data.id, this.data.lang, text_tool);
+  Blaze.renderWithData(Template.tags_tool, this.data, document.getElementById("tags_tool"));
   
   Blaze.render(Template.tiny_editor, document.getElementById("tiny_editor"));
 }
@@ -458,8 +421,14 @@ Template.choose_output.rendered = function(){
 }
 
 Template.tags_tool.rendered = function(){
-  $.getJSON( "/tree_flat/"+this.data["lang"]+"/"+this.data["id"], function(data){     
-      $('.ui.search').search({
+  var path = "/tree_flat/"+this.data["lang"]+"/"+this.data["id"];
+  if(Object.keys(async_cache).indexOf(path) == -1){
+    $.getJSON( path, function(data){     
+        async_cache[path] = data;
+        console.log(async_cache);
+        Session.set("async_cache", async_cache);
+        console.log(data);
+        $('#tags_search').search({
             source: data,
             minCharacters: 3,
             maxResults: 200,
@@ -510,8 +479,46 @@ Template.tags_tool.rendered = function(){
                 console.log(response);
                 //Session.set(response);
             }
-      });
-  });
+        });
+    });
+  }
+  else{
+    data = async_cache[path];
+    console.log(data);
+    $('#tags_search').search({
+            source: data,
+            minCharacters: 3,
+            maxResults: 200,
+            searchFields: [
+              'title'
+            ]         
+            ,onSelect : function(event,val){
+              console.log(event.target.textContent);
+              var uuid;
+              for(var i = 0; i < data.length; i++){
+                if(data[i].title == event.target.textContent){
+                  uuid = data[i].uuid;
+                }
+              }
+              if($("#tags_uuids").val().split(",").indexOf(uuid) != -1 ){
+              }
+              else{
+                $("#tags").append('<div class="ui tag label" value="'+uuid+'">'+event.target.textContent+'<i class="delete icon"></i></div>');
+                $(".results").transition('fade');
+                $(".prompt").val("");
+                if($("#tags_uuids").val() == ''){
+                  $("#tags_uuids").val(uuid);
+                }
+                else{
+                  $("#tags_uuids").val($("#tags_uuids").val()+','+uuid);
+                }
+              }
+            },
+            onResults : function(response){
+                console.log(response);
+            }
+        });
+  }
 }
 Template.tags_tool.events({
   'click .delete.icon': function(event){
@@ -554,7 +561,7 @@ Template.add_text_button.events({
     var text = $("#"+template_name+"_input").val();
     var id = $("#"+template_name+"_input_id").val();
     tinymce.activeEditor.execCommand('mceInsertContent', false, '<span class="T '+id+'" style="font-weight: bold;" data-mce-style="font-weight: bold;">'+text+'</span>&#160;');
-    $("#"+template_name+"_input").val("");
+    //$("#"+template_name+"_input").val("");
   }
 });
 
@@ -633,71 +640,40 @@ Template.khron_drop.rendered= function(callback){
     }
     else{
       $("#"+this.data.drop.dropdown_id).dropdown({
-        action: 'select'
+        action: 'select',
+        allowCategorySelection: true
       });
     }
 };
 
-Template.khron_drop.events({
-  'click .item': function(event,template){
-    console.log(template.data);
-    console.log(template.data.callback.name+"_extra");
-    window[template.data.callback.name+"_extra"](event,template.data);
-    /*
-    console.log(event);
-    console.log(data.drop.dropdown_id);
-    console.log(this);
-    var dropdownid = data.drop.dropdown_id;
-    var id = this.uuid;
-    var lang = this.lang;
-    var text = this.description;
-    $('#'+dropdownid+' .text:not(.icon)')[0].textContent = text;
-    Session.set("lang", lang);
-    Session.set("origin", id);
-    data = {id: id, lang: lang, origin: id};
-    console.log(data);
-    Blaze.renderWithData(Template.jstree, data, document.getElementById("tree"));
-    $('#'+dropdownid).dropdown('hide');
-    event.stopPropagation();
-    */
-  }
-});
 
 choose_ontology = function choose_ontology(data){
   $("#"+data.drop.dropdown_id).dropdown({
-        action: 'select'
-      });
-  /*
-  $("#"+data.drop.dropdown_id).dropdown({
-      onChange: function(value, text, $choice){
-        var id = $choice[0].attributes["data-uuid"].value;
-        var lang = $choice[0].attributes["data-lang"].value;
-        console.log($choice);
-        Session.set("lang", lang);
-        Session.set("origin", id);
-        data = {id: id, lang: lang, origin: id};
-        console.log(data);
-        Blaze.renderWithData(Template.jstree, data, document.getElementById("tree"));
-      }
-    });*/
+        action: 'select',
+        allowCategorySelection: true,
+        onChange: function(value, text, $choice){
+          var id = $choice[0].attributes["data-uuid"].value;
+          var lang = $choice[0].attributes["data-lang"].value;
+          console.log($choice);
+          Session.set("lang", lang);
+          Session.set("origin", id);
+          data = {id: id, lang: lang, origin: id};
+          console.log(data);
+          Blaze.renderWithData(Template.jstree, data, document.getElementById("tree"));
+        }
+  });
 }
 Template.ontologies.rendered = function(){
   $.getJSON( "/tree_onto", function(data){
     var dat = {};
     dat.drop = data;
     dat.drop.dropdown_id = "ontologies";
+    dat.drop.icon = "/icons/onto.png";
     dat.callback = choose_ontology;
     console.log(dat);
     Blaze.renderWithData(Template.khron_drop, dat, document.getElementById("onto_drop"));
   });
 }
-/*
-Template.ontologies.events({
-  'click .item': function(event){
-    choose_menu(event, "ontologies");
-  }
-})
-*/
 
 Template.tab.rendered = function(){
   $('#context1 .menu .item')
@@ -718,7 +694,7 @@ Template.jstree.rendered = function(){
     //$('#results').html('<h3 class="ui top attached header">Select one or more terms</h3><div class="ui info message" id="event_result"></div>');
     $('#results').html('');
     Blaze.render(Template.tab, document.getElementById("results"));
-    $('#transl_content').html('Select one or more terms');
+    $('#transl_content').html('<p>Select one or more terms.</p><p>**known bug**</p><p>do not select an open node or </p><p>a node that was recently closed</p><p>*browser freezes*</p>');
 
         /*
         if($('#ontology')){
@@ -825,11 +801,9 @@ Template.jstree.rendered = function(){
 
                     for(i = 0; i < langs.length; i++){
                       //console.log(output[langs[i]]);
-                        if(langs[i] != "code"){
-                          var src = 'icons/'+langs[i]+'.png';
-                        } else {
-                          var src = 'icons/ids.png';
-                        }
+
+                        var src = 'icons/'+langs[i]+'.png';
+
                         $('#translations').append(
                             $('<tr>').append(
                                 $('<td>').append(
@@ -1002,9 +976,8 @@ Template.jstree.rendered = function(){
 
                       else if(data.selected.length == 0){
                           //$('#results').html('<h3 class="ui top attached header">Select one or more terms</h3><div class="ui info message" id="event_result"></div>');
-                          $('#transl_content').html('Select one or more terms');
+                          $('#transl_content').html('<p>Select one or more terms.</p><p>**known bug**</p><p>do not select an open node or </p><p>a node that was recently closed</p><p>*browser freezes*</p>');
                       }
           
           });
 }
-

@@ -85,6 +85,16 @@ img{
     display: -webkit-flex;     /* NEW - Chrome */
     display: flex;
 }
+.inner{
+    margin-left: 5px;
+    margin-bottom: 3%;
+}
+#nav_drop{
+    margin-bottom: 3%;
+}
+#tags_tool{
+    margin-top: 10px;
+}
 #tags_segment{
     display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
     display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
@@ -100,10 +110,14 @@ img{
     display: -webkit-flex;     /* NEW - Chrome */
     display: flex;
 }
+.ui.tag.label{
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
 .middle{
-    max-width: 60%;
+    max-width: 90%;
     min-width: 400px;
-    padding-top: 40px;
+    /*padding-top: 40px;*/
     margin: auto;
 }
 .explanation{
@@ -114,4 +128,15 @@ img{
     position: fixed;
     bottom: 3.5px;
     right: 0;
+}
+.uncoverable{
+    min-width: 300px;
+}
+#uncoverable{
+    position: fixed;
+    top: 3.5px;
+    right: 0;
+}
+.block{
+    display: block;
 }

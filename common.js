@@ -14,6 +14,15 @@ Relation = Collections.Relation = new Mongo.Collection("subject_relation");
 //Relation =  new Mongo.Collection("rawrelation_d");
 applist = {};
 
+languages = {
+            "la" :"Latin",
+            "en" : "English",
+            "es" : "Spanish",
+            "jp" : "Japanese",
+            "ro" : "Romanian",
+            "code" : "Official Ids"
+          };
+
 idsToString = function idsToString(cursor){
 	var result = [];
 	cursor.forEach(function(ont){
@@ -286,7 +295,7 @@ Router.route('/tree_onto', function () {
 				}
 			}
 		}
-		object.children.push({name:[langs[i]], children: kids});
+		object.children.push({name:[languages[langs[i]]], lang: langs[i], children: kids});
 	}
 	this.response.end(JSON.stringify(object));
 
@@ -326,3 +335,7 @@ Router.route('/languages', function () {
 	}
 	this.response.end(JSON.stringify({ languages: langs.unique()}));
 }, {where: 'server'});
+
+Router.route('/dropt', function(){
+	this.render('droptest');
+});

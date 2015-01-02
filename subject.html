@@ -14,16 +14,26 @@
 </template>
 
 <template name="tools">
-  <div id="tool_tabs"></div>
-  <div class="flex" id="nav_drop"></div>
-  <div class="flex" id="choose_output"></div>
-  <div id="text_drop"></div>
-  <div class="flex" id="tags_tool"></div>
-  <div class="middle">
-    <div class="flex" id="search_tool"></div>
-    <div id="tiny_editor"></div>
+  <div class="inner">
+    <div class="flex" id="nav_drop"></div>
+    <div class="flex" id="choose_output"></div>
+    <div class="ui centered grid">
+      <div class="doubling two column row">
+        <div class="eight wide column">
+          <div id="text_drop"></div>
+        </div>
+        <div class="eight wide column">
+          <div class="middle">
+            <div class="flex" id="search_tool"></div>
+            <div id="tiny_editor"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex" id="tags_tool"></div>
   </div>
   {{> help}}
+  {{> uncoverable}}
 </template>
 <template name="choose_output">
   <div class="ui blue buttons">
@@ -45,7 +55,7 @@
     <span class="text">Search subjects...</span>
     <div class="menu">
       {{#each subjects}}
-        <div class="item" data-id="{{choose this.uuid this.id}}" data-value="{{this.name}}" data-child="{{this.haschildren}}">{{this.name}}
+        <div class="item" data-uuid="{{choose this.uuid this.id}}" data-value="{{this.name}}" data-name="{{this.subject}}" data-lang="{{this.lang}}">{{this.name}}
         </div>
       {{/each}}
     </div>
@@ -53,22 +63,24 @@
 </template>
 
 <template name="tags_tool">
-  <div class="flex">
-    <div class="ui compact raised segment" id="tags_segment">
-      <div class="tags_content">
-        <i class="big blue tags icon"></i>
-        <div class="tags" id="tags"></div>
-        <input type="hidden" id="tags_uuids">
-      </div>
-      &nbsp;
-      <div class="ui search">
-        <div class="ui icon input">
-            <i class="search icon"></i>
-            <input class="prompt" type="text" placeholder="Search subjects...">
+  <div class="block">
+    <div class="flex">
+      <div class="ui compact raised segment" id="tags_segment">
+        <div class="tags_content">
+          <i class="big blue tags icon"></i>
+          <div class="tags" id="tags"></div>
         </div>
-        <div class="results"></div>
+        &nbsp;
+        <div class="ui search" id="tags_search">
+          <div class="ui icon input">
+              <i class="search icon"></i>
+              <input class="prompt" type="text" placeholder="Search subjects...">
+          </div>
+          <div class="results"></div>
+        </div>
       </div>
     </div>
+    <input class="uncoverable" type="hidden" id="tags_uuids">
   </div>
 </template>
 <template name="add_text_button">
@@ -77,16 +89,21 @@
   </div>
 </template>
 <template name="view_source_button">
-  <div class="ui icon blue button">
+  <div class="ui icon blue disabled button">
     <i class="code icon"></i>
   </div>
+</template>
+<template name="uncoverable">
+  <a href="javascript:;">
+    <i class="circular large unhide icon" id="uncoverable" onclick="show_uuids()"></i>
+  </a>
 </template>
 
 <template name="input">
    <div class="flex">
      <div class="ui input">
       <input type={{text_type}} id={{text_id}} placeholder={{placeholder}} >
-      <input type="hidden" id={{hidden_id}}>
+      <input class="uncoverable" type="hidden" id={{hidden_id}}>
     </div>
     <div class="buttons" id={{buttons_id}}>
       {{> add_text_button}}
@@ -97,15 +114,18 @@
 
 <template name="tiny_editor">
     <form method="post" action="somepage">
-        <textarea name="content" id="content" style="width:100%"><p>The <span class="T 4297" style="font-weight: bold;">Femoral artery</span> is a large <span class="T 3527" style="font-weight: bold;">Artery</span> in the <span class="T 82" style="font-weight: bold;">Thigh</span>. It is a continuation of the <span class="T 4289" style="font-weight: bold;">External iliac artery</span> and begins at the <span class="T 1885" style="font-weight: bold;">Inguinal canal</span>.</p></textarea>
+        <textarea name="content" id="content" style="width:100%"><p>The <span class="T be752dce775911e4adb657ce06b062da" style="font-weight: bold;">Femoral artery</span> is a large <span class="T be7335dc775911e4adb657ce06b062da" style="font-weight: bold;">Artery</span> in the <span class="T be6614ec775911e4adb657ce06b062da" style="font-weight: bold;">Thigh</span>. It is a continuation of the <span class="T be7529aa775911e4adb657ce06b062da" style="font-weight: bold;">External iliac artery</span> and begins at the <span class="T be6c8a2a775911e4adb657ce06b062da" style="font-weight: bold;">Inguinal canal</span>.</p></textarea>
     </form>
     <div id="lab"></div>
     <div class="explanation">
+      <!--
       <p>
         Insert controlled vocabulary terms using Insert/Controlled Phrase menu.
       </p>
+    -->
       <p>
-        <a href="#" onclick="check('en', true)">Check</a> correctiveness. <a href="#" onclick="check('en',false)">Update</a> terms. <a href="#" onclick="check('la',false)">Translate</a> terms in Latin (or any other provided language). <a href="#" onclick="check('en',false,true)">Show</a> refs. <a href="#" onclick="blend()">Blend</a> in text. <a href="#" onclick="bold()">Bold</a> the terms. 
+        <!--
+        <a href="#" onclick="check('en', true)">Check</a> correctiveness. <a href="#" onclick="check('en',false)">Update</a> terms. <a href="#" onclick="check('la',false)">Translate</a> terms in Latin (or any other provided language). <a href="#" onclick="check('en',false,true)">Show</a> refs.--> <a href="#" onclick="blend()">Blend</a> in text. <a href="#" onclick="bold()">Bold</a> the terms. 
       </p>
     </div>
 </template>
@@ -122,18 +142,18 @@
   <div id="context1">
     <div class="ui top attached tabular menu">
         <a class="active item" id="transl_tab" data-tab="transl" data-content="Subject Info"><img class="img_apps_first" src="icons/info.png" /></a>
-        <a class="item" id="search_tab" data-tab="search" data-content="Search Tools"><img class="img_apps_first" src="icons/search.png" /></a>
         <a class="item" id="tools_tab" data-tab="tools" data-content="Subject Plugins"><img class="img_apps_first" src="icons/plugin.png" /></a>
+        <a class="item" id="search_tab" data-tab="search" data-content="Search Tools"><img class="img_apps_first" src="icons/search.png" /></a>    
     </div>
     <div class="ui bottom attached active tab segment" id="transl_content" data-tab="transl"></div>
-    <div class="ui bottom attached tab segment" id="search_content" data-tab="search"></div>
     <div class="ui bottom attached tab segment" id="tools_content" data-tab="tools"></div>
+    <div class="ui bottom attached tab segment" id="search_content" data-tab="search"></div>
   </div>
 </template>
 
 <template name="help">
   <div id="help">
-    <a target="_blank" href="https://github.com/loredanacirstea/subjectrawl/wiki">
+    <a target="_blank" href="https://github.com/loredanacirstea/subjectrawl/wiki/How-to-use-SubjectRaw">
       <i class="circular large info icon"></i>
     </a>
     <a target="_blank" href="https://github.com/loredanacirstea/subjectrawl">
@@ -155,7 +175,7 @@
 </template>
 
 <template name="dropdownSec">
-    <img src={{this.icon}}>
+    <img src={{iconify this.icon this.lang}}>
     <span class="text">
         {{#each this.name}}
           {{{this}}}
@@ -170,11 +190,11 @@
 </template>
 
 <template name="kidsItems">
-    <div class="item" data-uuid="{{choose this.uuid_subject this.uuid}}" data-lang="{{this.lang}}" data-child="{{this.haschildren}}">
+    <div class="item" data-uuid="{{choose this.uuid_subject this.uuid}}" data-lang="{{this.lang}}" data-name="{{this.subject}}">
       {{#if this.children}}
         {{>  Template.dynamic template="dropdownSec" data=this}}
       {{else}}
-        <img src={{this.flag}}>
+        <img src={{flag this.lang}}>
         {{this.name}}
       {{/if}}
     </div>
@@ -194,14 +214,11 @@
 </template>
 
 <template name="search_tree_dropdown">
-  {{log drop}}
   {{>  Template.dynamic template="search_dropdown" data=drop }}
 </template> 
 
 
 <template name="search_dropdown">
-  {{log this}}
-  {{log this.dropdown_id}}
   <div class="ui dropdown labeled search icon button" id={{this.dropdown_id}}>
       {{>  Template.dynamic template="search_dropdownSec" data=this}}
     </div>
@@ -222,7 +239,7 @@
 </template>
 
 <template name="search_dropdown_kidsItems">
-    <div class="item" data-id="{{choose this.uuid this.id}}" data-lang="{{this.lang}}" data-child="{{this.haschildren}}">
+    <div class="item" data-uuid="{{choose this.uuid this.id}}" data-lang="{{this.lang}}" data-name="{{this.subject}}">
       {{#if this.children}}
         {{>  Template.dynamic template="search_dropdownSec" data=this}}
       {{else}}
