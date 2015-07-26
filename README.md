@@ -77,3 +77,7 @@ SubjectRaw project on Meteor - semantic web content
 
 
 ```
+
+Data is loaded by uncommenting line 77-78 from server->server.js: [https://github.com/loredanacirstea/subjectrawl/blob/master/server/server.js#L77](https://github.com/loredanacirstea/subjectrawl/blob/master/server/server.js#L77)
+cvs data should be in [private](https://github.com/loredanacirstea/subjectrawl/tree/master/private) folder
+

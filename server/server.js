@@ -46,10 +46,8 @@ initUrlCollection = function(url, Collection){
 }
 
 initData = function(){
-    //initCsvCollection("ontologies.csv", Ontologies);
-    //initCsvCollection("term.csv", Subject);
-    //initCsvCollection("term_relation.csv", Relation);
-    //initCsvCollection("apps.csv", Apps);
+    initCsvCollection("ontologies.csv", Ontologies);
+    initCsvCollection("apps.csv", Apps);
     initCsvCollection("subjectraw.csv", SubjectRaw);
     initCsvCollection("subjectraw_relation.csv", RawRelation);
 }
