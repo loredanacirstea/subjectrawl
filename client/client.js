@@ -383,6 +383,11 @@ new_dropdown = function(level, node, id, lang, origin, callback){
 }
 
 Template.tools.rendered = function(){
+  this.data = {};
+  this.data["id"] = FlowRouter.getParam('_id');
+  this.data["lang"] = FlowRouter.getParam('lg');
+  this.data["origin"] = FlowRouter.getParam('origin');
+
   Session.set("lang",this.data["lang"]);
   Session.set("origin",this.data["origin"]);
   var dropdowns = ["kids", "siblings", "path", "tree", "tree_flat", "translations"];

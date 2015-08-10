@@ -48,8 +48,8 @@ initUrlCollection = function(url, Collection){
 initData = function(){
     initCsvCollection("ontologies.csv", Ontologies);
     initCsvCollection("apps.csv", Apps);
-    initCsvCollection("subjectraw.csv", SubjectRaw);
-    initCsvCollection("subjectraw_relation.csv", RawRelation);
+    initCsvCollection("subjectraw.csv", Subject);
+    initCsvCollection("subjectraw_relation.csv", Relation);
 }
 
 initAppCache = function(){
@@ -77,11 +77,5 @@ nodash = function(Collection, fields){
 //initData();
 //initAppCache();
 
-
-if (Meteor.isServer) {
-  Meteor.startup(function () {
-    // code to run on server at startup
-  });
-}
 
 

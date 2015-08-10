@@ -5,13 +5,9 @@
 
 meteor-platform
 insecure
-accounts-ui
-accounts-google
-accounts-twitter
-accounts-github
-iron:router
-raix:handlebar-helpers
 udondan:bulk-collection-update
 
 nooitaf:semantic-ui
-cottz:publish-with-relations
+kadira:flow-router
+kadira:blaze-layout
+meteorhacks:picker
