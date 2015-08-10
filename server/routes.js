@@ -103,6 +103,91 @@ tree_flat_recursive = function(id, lang, data, ord){
   return data;
 }
 
+Picker.route('/translate/:from/:to/:phrase', function (params, req, res, next) {
+  var lang1 = params.from,
+      lang2 = params.to,
+      phrase = decodeURI(params.phrase),
+      sep, ini, type;
+
+  if(params.query){
+    //concept separator
+    if(params.query.sep)
+      sep = decodeURI(params.query.sep);
+    //initial fillers (spaces, tabs)
+    if(params.query.ini)
+      ini = decodeURI(params.query.ini);
+    //response type - can be json; defaults to text
+    if(params.query.type)
+      type = params.query.type;
+  }
+
+  //no separator -> 1 concept
+  if(typeof sep !== 'undefined')
+    phrase = phrase.split(sep);
+  else
+    phrase = [phrase];
+
+  var transl = [], subj, tr = '', iniStr, phr;
+  for(var i = 0; i < phrase.length; i++){
+    //memorize no. of filler characters
+    if(typeof ini !== 'undefined'){
+      iniStr = phrase[i].match('^' + ini + '*')[0];
+      phrase[i] = phrase[i].substring(iniStr.length);
+    }
+    //find the closest translation first: == or case insensitive or expand to concepts that contain the phrase
+    subj = idsToString(Subject.find({lang:lang1, subject: phrase[i]}));
+
+    if(subj.length === 0)
+      subj = idsToString(Subject.find({lang:lang1, subject: {$regex: '^'+phrase[i]+'$', $options: '<i>'}}));
+
+    //if(subj.length === 0)
+    //  subj = idsToString(Subject.find({lang:lang1, subject: {$regex: '^'+phrase[i], $options: '<i>'}}));
+    if(subj.length === 0)
+      subj = idsToString(Subject.find({lang:lang1, subject: {$regex: phrase[i], $options: '<i>'}}));
+
+    //find the first translation by uuid
+    for(var j = 0; j < subj.length; j++){
+      tr = Subject.findOne({uuid: subj[j].uuid, lang: lang2});
+      if(tr){
+        tr = tr.subject;
+        break;
+      }
+      else
+        tr = '';
+    }
+
+    //match case with query
+    if(tr.length > 0)
+      if(phrase[i].toLowerCase() === phrase[i])
+        tr = tr.toLowerCase()
+      else if(phrase[i].toUpperCase() === phrase[i])
+        tr = tr.toUpperCase();
+      else if(phrase[i][0].toUpperCase() === phrase[i][0])
+        tr = tr[0].toUpperCase() + tr.substring(1);
+
+    if(typeof iniStr !== 'undefined')
+      tr = iniStr + tr;
+    transl.push(tr);
+  }
+
+  //output normal string or json if this is the type wanted
+  if(type === 'text') {
+    res.writeHead(200, {
+      'Content-Type': 'text/plain; charset=utf-8' 
+    });
+    if(typeof sep !== 'undefined')
+      res.end(transl.join(sep));
+    else
+      res.end(transl);
+  }
+  else {
+    res.writeHead(200, {
+      'Content-Type': 'application/json; charset=utf-8' 
+    });
+    res.end(JSON.stringify(transl));
+  }
+});
+
 Picker.route('/subject_path/:lg/:_id/origin/:origin', function (params, req, res, next) {
   var id = params._id;
   var lang = params.lg;
