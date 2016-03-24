@@ -1,0 +1,339 @@
+swagger: '2.0'
+info:
+  title: SubjectRaw
+  description: SubjectRaw
+  version: ""
+# the domain of the service
+host: orobo.go.ro:4000
+# array of all schemes that your API supports
+schemes:
+  - http
+# will be prefixed to all paths
+basePath: /
+produces:
+  - application/json
+  - text/plain
+paths:
+  /translate/:from/:to/:phrase:
+    get:
+      summary: Translate.
+      description:  Translate.
+      parameters:
+        - name: from
+          in: header
+          description: language string
+          required: true
+          type: string
+        - name: to
+          in: header
+          description:  language string
+          required: true
+          type: string
+        - name: phrase
+          in: header
+          description: Phrase to be translated
+          required: true
+          type: string
+        - name: sep
+          in: query
+          description: concept separator; no separator -> phrase = 1 concept
+          required: false
+          type: string
+        - name: ini
+          in: query
+          description: initial fillers (spaces, tabs)
+          required: false
+          type: string
+        - name: type
+          in: query
+          description: response type - can be json; defaults to text
+          required: false
+          type: string
+      tags:
+        - Translation
+      responses:
+        200:
+          description: Translation returned
+          schema:
+            type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /subject_path/:lg/:id/origin/:origin:
+    get:
+      summary: Concept path
+      description: |
+        Concept path
+      parameters:
+        - name: lg
+          in: header
+          description: Language string
+          required: true
+          type: string
+        - name: id
+          in: header
+          description: Concept id
+          required: true
+          type: string
+        - name: origin
+          in: header
+          description: Origin concept id
+          required: true
+          type: string
+      tags:
+        - Path
+        - Subject
+      responses:
+        200:
+          description: Array of concepts ordered by hierarchy
+          schema:
+            type: string
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /subject/:lg/:id:
+    get:
+      summary: Get subject
+      description: Get subject
+      parameters:
+        - name: lg
+          in: header
+          description: Language string
+          required: true
+          type: string
+        - name: id
+          in: header
+          description: Concept id
+          required: true
+          type: string
+      tags:
+        - Subject
+      responses:
+        200:
+          description: Subject data
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /ontology/:lg/:id:
+    get:
+      summary: Ontology description
+      description: Ontology description
+      parameters:
+        - name: lg
+          in: header
+          description: Language string
+          required: true
+          type: string
+        - name: id
+          in: header
+          description: Concept id
+          required: true
+          type: string
+      tags:
+        - Ontology
+      responses:
+        200:
+          description: Ontology data
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /ontologies:
+    get:
+      summary: Ontologies
+      description: Ontologies
+      parameters:
+        - name: lg
+          in: header
+          description: Language string
+          required: true
+          type: string
+      tags:
+        - Ontology
+      responses:
+        200:
+          description: Ontologies
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /ontologies/:lg:
+    get:
+      summary: Ontologies by language
+      description: Ontologies by language
+      parameters:
+        - name: lg
+          in: header
+          description: Language string
+          required: true
+          type: string
+      tags:
+        - Ontology
+      responses:
+        200:
+          description: Ontologies by language
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /translations/:id:
+    get:
+      summary: Get subject translation
+      description: Get subject translation
+      parameters:
+        - name: id
+          in: header
+          description: Concept id
+          required: true
+          type: string
+      tags:
+        - Subject
+      responses:
+        200:
+          description: Subject translation
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /apps/:lg/:id/origin/:origin:
+    get:
+      summary: Get subject Apps
+      description: Get subject Apps
+      parameters:
+        - name: lg
+          in: header
+          description: Language string
+          required: true
+          type: string
+        - name: id
+          in: header
+          description: Concept id
+          required: true
+          type: string
+        - name: origin
+          in: header
+          description: Origin concept id
+          required: true
+          type: string
+      tags:
+        - Apps
+      responses:
+        200:
+          description: Subject apps
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tree/:lg/:_id:
+    get:
+      summary: Get subject tree
+      description: Get subject tree
+      parameters:
+        - name: lg
+          in: header
+          description: Language string
+          required: true
+          type: string
+        - name: id
+          in: header
+          description: Concept id
+          required: true
+          type: string
+      tags:
+        - Subject
+        - Tree
+      responses:
+        200:
+          description: Subject tree data
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tree_onto/:lg/:_id:
+    get:
+      summary: Get ontology tree
+      description: Get ontology tree
+      parameters:
+        - name: lg
+          in: header
+          description: Language string
+          required: true
+          type: string
+        - name: id
+          in: header
+          description: Concept id
+          required: true
+          type: string
+      tags:
+        - Ontology
+        - Tree
+      responses:
+        200:
+          description: Ontology tree data
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tree_onto:
+    get:
+      summary: Ontology tree data
+      description: Ontology tree data
+      tags:
+        - Ontology
+        - Tree
+      responses:
+        200:
+          description: Ontology tree data
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /tree_flat/:lg/:_id:
+    get:
+      summary: Get subject flat tree
+      description: Get subject flat tree
+      parameters:
+        - name: lg
+          in: header
+          description: Language string
+          required: true
+          type: string
+        - name: id
+          in: header
+          description: Concept id
+          required: true
+          type: string
+      tags:
+        - Subject
+        - Tree
+      responses:
+        200:
+          description: Subject flat tree
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+  /languages:
+    get:
+      summary: Get languages
+      description: Get languages
+      tags:
+        - Ontology
+      responses:
+        200:
+          description: Languages
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+ Error:
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
