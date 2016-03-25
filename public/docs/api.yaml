@@ -4,7 +4,7 @@ info:
   description: SubjectRaw
   version: ""
 # the domain of the service
-host: orobo.go.ro:4000
+host: 
 # array of all schemes that your API supports
 schemes:
   - http
@@ -14,23 +14,23 @@ produces:
   - application/json
   - text/plain
 paths:
-  /translate/:from/:to/:phrase:
+  /translate/{from}/{to}/{phrase}:
     get:
       summary: Translate.
       description:  Translate.
       parameters:
         - name: from
-          in: header
+          in: path
           description: language string
           required: true
           type: string
         - name: to
-          in: header
+          in: path
           description:  language string
           required: true
           type: string
         - name: phrase
-          in: header
+          in: path
           description: Phrase to be translated
           required: true
           type: string
@@ -60,24 +60,24 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-  /subject_path/:lg/:id/origin/:origin:
+  /subject_path/{lg}/{id}/{origin}/{origin}:
     get:
       summary: Concept path
       description: |
         Concept path
       parameters:
         - name: lg
-          in: header
+          in: path
           description: Language string
           required: true
           type: string
         - name: id
-          in: header
+          in: path
           description: Concept id
           required: true
           type: string
         - name: origin
-          in: header
+          in: path
           description: Origin concept id
           required: true
           type: string
@@ -93,18 +93,18 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-  /subject/:lg/:id:
+  /subject/{lg}/{id}:
     get:
       summary: Get subject
       description: Get subject
       parameters:
         - name: lg
-          in: header
+          in: path
           description: Language string
           required: true
           type: string
         - name: id
-          in: header
+          in: path
           description: Concept id
           required: true
           type: string
@@ -117,18 +117,18 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-  /ontology/:lg/:id:
+  /ontology/{lg}/{id}:
     get:
       summary: Ontology description
       description: Ontology description
       parameters:
         - name: lg
-          in: header
+          in: path
           description: Language string
           required: true
           type: string
         - name: id
-          in: header
+          in: path
           description: Concept id
           required: true
           type: string
@@ -145,12 +145,6 @@ paths:
     get:
       summary: Ontologies
       description: Ontologies
-      parameters:
-        - name: lg
-          in: header
-          description: Language string
-          required: true
-          type: string
       tags:
         - Ontology
       responses:
@@ -160,13 +154,13 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-  /ontologies/:lg:
+  /ontologies/{lg}:
     get:
       summary: Ontologies by language
       description: Ontologies by language
       parameters:
         - name: lg
-          in: header
+          in: path
           description: Language string
           required: true
           type: string
@@ -179,13 +173,13 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-  /translations/:id:
+  /translations/{id}:
     get:
       summary: Get subject translation
       description: Get subject translation
       parameters:
         - name: id
-          in: header
+          in: path
           description: Concept id
           required: true
           type: string
@@ -198,23 +192,23 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-  /apps/:lg/:id/origin/:origin:
+  /apps/{lg}/{id}/origin/{origin}:
     get:
       summary: Get subject Apps
       description: Get subject Apps
       parameters:
         - name: lg
-          in: header
+          in: path
           description: Language string
           required: true
           type: string
         - name: id
-          in: header
+          in: path
           description: Concept id
           required: true
           type: string
         - name: origin
-          in: header
+          in: path
           description: Origin concept id
           required: true
           type: string
@@ -227,18 +221,18 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-  /tree/:lg/:_id:
+  /tree/{lg}/{id}:
     get:
       summary: Get subject tree
       description: Get subject tree
       parameters:
         - name: lg
-          in: header
+          in: path
           description: Language string
           required: true
           type: string
         - name: id
-          in: header
+          in: path
           description: Concept id
           required: true
           type: string
@@ -252,18 +246,18 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-  /tree_onto/:lg/:_id:
+  /tree_onto/{lg}/{id}:
     get:
       summary: Get ontology tree
       description: Get ontology tree
       parameters:
         - name: lg
-          in: header
+          in: path
           description: Language string
           required: true
           type: string
         - name: id
-          in: header
+          in: path
           description: Concept id
           required: true
           type: string
@@ -291,18 +285,18 @@ paths:
           description: Unexpected error
           schema:
             $ref: '#/definitions/Error'
-  /tree_flat/:lg/:_id:
+  /tree_flat/{lg}/{id}:
     get:
       summary: Get subject flat tree
       description: Get subject flat tree
       parameters:
         - name: lg
-          in: header
+          in: path
           description: Language string
           required: true
           type: string
         - name: id
-          in: header
+          in: path
           description: Concept id
           required: true
           type: string

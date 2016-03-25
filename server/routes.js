@@ -169,7 +169,7 @@ Picker.route('/translate/:from/:to/:phrase', function (params, req, res, next) {
       tr = iniStr + tr;
     transl.push(tr);
   }
-
+  res.setHeader("Access-Control-Allow-Origin", "*");
   //output normal string or json if this is the type wanted
   if(type === 'text') {
     res.writeHead(200, {
@@ -192,29 +192,34 @@ Picker.route('/subject_path/:lg/:_id/origin/:origin', function (params, req, res
   var id = params._id;
   var lang = params.lg;
   var origin = params.origin;
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.end(JSON.stringify(path(id, origin, lang, false)));
 });
 
 Picker.route('/subject/:lg/:_id', function (params, req, res, next) {
   var id = params._id;
   var lang = params.lg;
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.end(JSON.stringify(subject(id,lang)));
 });
 
 Picker.route('/ontology/:lg/:_id', function (params, req, res, next) {
   var id = params._id;
   var lang = params.lg;
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.end(JSON.stringify(ontology(id,lang)));
 });
 
 Picker.route('/ontologies', function (params, req, res, next) {
   var onto = Ontologies.find();
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.end(JSON.stringify(idsToString(onto)));
 });
 
 Picker.route('/ontologies/:lg', function (params, req, res, next) {
   var lang = params.lg;
   var onto = Ontologies.find({lang:lang}).fetch();
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.end(JSON.stringify(onto));
 });
 
@@ -225,6 +230,7 @@ Picker.route('/translations/:_id', function (params, req, res, next) {
   for(i = 0; i < eq.length; i++){
     transl[eq[i]["lang"]] = [eq[i]["subject"]];
   }
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.end(JSON.stringify(transl));
 });
 
@@ -249,6 +255,7 @@ Picker.route('/apps/:lg/:_id/origin/:origin', function (params, req, res, next) 
       break;
     }
   }
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.end(JSON.stringify(transl));
 });
 
@@ -261,6 +268,7 @@ Picker.route('/tree/:lg/:_id', function (params, req, res, next) {
   if(data.haschildren[0] > 0){
     data = tree_recursive(id, lang, data, subject);
   }
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.end(JSON.stringify(data));
 
 });
@@ -273,6 +281,7 @@ Picker.route('/tree_onto/:lg/:_id', function (params, req, res, next) {
   if(data.haschildren[0] > 0){
     data = tree_recursive(id, lang, data, ontology);
   }
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.end(JSON.stringify(data));
 
 });
@@ -314,6 +323,7 @@ Picker.route('/tree_onto', function (params, req, res, next) {
     }
     object.children.push({name:[languages[langs[i]]], lang: langs[i], children: kids});
   }
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.end(JSON.stringify(object));
 
 });
@@ -328,6 +338,7 @@ Picker.route('/tree_flat/:lg/:_id', function (params, req, res, next) {
   if(data[0].haschildren[0] > 0){
     data = tree_flat_recursive(id, lang, data, data[0].order);
   }
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.end(JSON.stringify(data));
 
 });
@@ -338,6 +349,7 @@ Picker.route('/languages', function (params, req, res, next) {
   for(var i=0; i < langss.length; i++){
     langs.push(langss[i].lang);
   }
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.end(JSON.stringify({ languages: langs.unique()}));
 });
 
