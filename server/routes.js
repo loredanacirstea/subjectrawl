@@ -103,6 +103,81 @@ tree_flat_recursive = function(id, lang, data, ord){
   return data;
 }
 
+search = function(text, query, options) {
+  if(!query)
+    query = {}
+  if(!options)
+    options = {}
+
+  // We first look at exact matches
+  query.subject = text
+  var subs1 = Subject.find(query, options).fetch()
+  console.log('subs1: ' + subs1.length)
+  var ids = subs1.map(function(s) { return s.uuid })
+  var len = ids.length
+  console.log(JSON.stringify(options))
+  // Recalculate limit
+  options = getLimit(options, len)
+  if(!options)
+    return subs1
+  console.log(JSON.stringify(options))
+  // Recalculate skip
+  options = getSkip(options, Subject.find(query).count())
+  // Then subjects that start with that text
+  query.subject = {$regex: '^'+text+'$', $options: '<i>'}
+  query.uuid = {$nin: ids}
+  var subs2 = Subject.find(query, options).fetch()
+  console.log('subs2: ' + subs2.length)
+  subs2.forEach(function(s) {
+    if(ids.indexOf(s.uuid) == -1) {
+      subs1.push(s)
+      ids.push(s.uuid)
+    }
+  })
+  len = ids.length
+
+  // Recalculate limit
+  options = getLimit(options, len)
+  if(!options)
+    return subs1
+  console.log(JSON.stringify(options))
+  // Recalculate skip
+  options = getSkip(options, len + Subject.find(query).count())
+  query.subject = {$regex: text, $options: '<i>'}
+  query.uuid = {$nin: ids}
+  subs2 = Subject.find(query, options).fetch()
+  console.log('subs2: ' + subs2.length)
+  subs2.forEach(function(s) {
+    if(ids.indexOf(s.uuid) == -1) {
+      subs1.push(s)
+      ids.push(s.uuid)
+    }
+  })
+  console.log('subs1: ' + subs1.length)
+  console.log(JSON.stringify(subs1))
+  return subs1
+}
+
+getLimit = function(options, len) {
+  console.log('len: ' + len)
+  if(options.limit) {
+    options.limit = parseInt(options.limit) - parseInt(len)
+    console.log('options.limit: ' +options.limit)
+    if(options.limit < 0)
+      options.limit = 0
+  }
+  return options
+}
+
+getSkip = function(options, len) {
+  if(options.skip) { 
+    options.skip -= len
+    if(options.skip < 0)
+      options.skip = 0
+  }
+  return options
+}
+
 Picker.route('/translate/:from/:to/:phrase', function (params, req, res, next) {
   var lang1 = params.from,
       lang2 = params.to,
@@ -147,15 +222,18 @@ Picker.route('/translate/:from/:to/:phrase', function (params, req, res, next) {
 
     //find the first translation by uuid
     for(var j = 0; j < subj.length; j++){
+      console.log('from uuid: ' + subj[j].uuid);
       tr = Subject.findOne({uuid: subj[j].uuid, lang: lang2});
+      console.log('tr: ' + JSON.stringify(tr));
       if(tr){
         tr = tr.subject;
+        console.log('tr subject: ' + tr);
         break;
       }
       else
         tr = '';
     }
-
+    console.log('tr: ' + tr)
     //match case with query
     if(tr.length > 0)
       if(phrase[i].toLowerCase() === phrase[i])
@@ -167,8 +245,10 @@ Picker.route('/translate/:from/:to/:phrase', function (params, req, res, next) {
 
     if(typeof iniStr !== 'undefined')
       tr = iniStr + tr;
+    console.log('tr final: ' + tr)
     transl.push(tr);
   }
+  console.log('transl: ' + JSON.stringify(transl));
   res.setHeader("Access-Control-Allow-Origin", "*");
   //output normal string or json if this is the type wanted
   if(type === 'text') {
@@ -188,12 +268,76 @@ Picker.route('/translate/:from/:to/:phrase', function (params, req, res, next) {
   }
 });
 
+Picker.route('/api/subject/search', function (params, req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin','*')
+
+  if(!res.method == 'GET') {
+    res.statusCode = 400
+    res.statusMessage = 'Bad request. Only GET accepted';
+    res.end('Bad request. Only GET accepted');
+    return
+  }
+
+  var text = params.query.text, query = {},
+    lang2 = params.query.lang2, result
+
+  if(params.query.lang)
+    query.lang = params.query.lang
+
+  var opt = {}
+  if(params.query.skip)
+    opt.skip = parseInt(params.query.skip)
+  if(params.query.limit)
+    opt.limit = parseInt(params.query.limit)
+
+  res.setHeader('Content-Type', 'application/json')
+  res.statusCode = 200
+  if(text)
+    result = search(text, query, opt)
+  else
+    result = Subject.find(query, opt).fetch()
+  if(lang2)
+    result = result.map(function(r) {
+      Subject.findOne({uuid: r.uuid, lang: lang2})
+    })
+  res.end(JSON.stringify(result))
+})
+
 Picker.route('/subject_path/:lg/:_id/origin/:origin', function (params, req, res, next) {
   var id = params._id;
   var lang = params.lg;
   var origin = params.origin;
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.end(JSON.stringify(path(id, origin, lang, false)));
+});
+
+Picker.route('/api/subject', function (params, req, res, next) {
+  var id = params.query.id;
+  var uuid = params.query.uuid;
+  var lang = params.query.lang;
+  var subject = params.query.subject;
+  var lang2 = params.query.lang2;
+  var result;
+  if(id)
+    result = Subject.findOne(id)
+  if(subject && lang)
+    result = Subject.findOne({subject: subject, lang: lang})
+  if(uuid && lang)
+    result = Subject.findOne({uuid: lang, lang: lang})
+  if(lang2 && lang2 != 'all')
+    if(result)
+      result = Subject.findOne({uuid: result.uuid, lang: lang2})
+    else
+      result = Subject.findOne({uuid: uuid, lang: lang2})
+  if((lang2 == 'all' && (uuid || result)) || (uuid && !result))
+    result = Subject.find({uuid: uuid || result.uuid}).fetch()
+
+
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  if(result)
+    res.end(JSON.stringify(result))
+  else
+    res.end('')
 });
 
 Picker.route('/subject/:lg/:_id', function (params, req, res, next) {
